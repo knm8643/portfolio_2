@@ -1,39 +1,56 @@
 package com.mycompany.myapp;
 
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.Locale;
+import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
-/**
- * Handles requests for the application home page.
- */
+import dao.MemberDAO;
+import service.MemberService;
+
 @Controller
 public class HomeController {
 	
-	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+	@Autowired
+	private HttpSession session;
 	
-	/**
-	 * Simply selects the home view to render by returning its name.
-	 */
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home(Locale locale, Model model) {
-		logger.info("Welcome home! The client locale is {}.", locale);
-		
-		Date date = new Date();
-		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-		
-		String formattedDate = dateFormat.format(date);
-		
-		model.addAttribute("serverTime", formattedDate );
-		
+	@Autowired(required=true)
+	private MemberService memberService;
+	
+	@RequestMapping(value = "/")
+	public String home() {
 		return "home";
 	}
 	
+	@RequestMapping("Login")
+	public String Login(String name, String pass) {
+		System.out.println(name + pass);
+		
+		int result = memberService.login(name, pass);
+		System.out.println(result);
+		return "redirect: /";
+	}
+	
+	@RequestMapping("LogOut")
+	public String LogOut() {
+		session.invalidate();
+		return "redirect: /";
+	}
+	
+	@RequestMapping("SignUp")
+	public String SignUp() {
+		return "/member/SignUp";
+	}
+	
+	@RequestMapping("Update")
+	public String Update() {
+		return "/member/Update";
+	}
+	
+	@RequestMapping("BoardList")
+	public String BoardList() {
+		return "/board/BoardList";
+	}
+		
 }
